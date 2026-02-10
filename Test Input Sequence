@@ -1,12 +1,14 @@
-2,0
-0,0
-0,1
-1,1
-1,2
-2,2
-2,3
-3,3
-3,4
-4,4
-4,5
-5,5
+UART '0'
+UART '0'
+UART '1'
+UART '1'
+UART '2'
+UART '2'
+UART '3'
+UART '3'
+UART '4'
+UART '4'
+UART '5'
+UART '5'
+UART '0'
+UART '0'
