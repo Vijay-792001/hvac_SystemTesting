@@ -1,0 +1,6 @@
+[8:38:56 PM] [AGENT] Opening serial port /dev/ttyUSB0 at 115200...
+[8:38:56 PM] [SUCCESS] Connected: 5a733f46-9edb-4ed6-abf9-4e32fe9c51f7
+[8:38:56 PM] [TX] 0
+[8:39:07 PM] [RX]
+"CMD_SENT=0\r\nNO_ACTION=1\r\n"
+[8:39:07 PM] [SUCCESS] Test Run Completed.
