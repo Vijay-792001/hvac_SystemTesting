@@ -1,0 +1,21 @@
+[2:21:13 PM] [AGENT] Opening serial port /dev/ttyUSB0 at 115200...
+[2:21:13 PM] [SUCCESS] Connected: cf944949-83f8-4db5-9e8e-32ce974192b7
+[2:21:13 PM] [TX] 0
+[2:21:23 PM] [RX]
+"CMD_SENT=0\r\nNO_ACTION=1\r\n"
+[2:21:23 PM] [TX] 1
+[2:21:33 PM] [RX]
+"CMD_SENT=1\r\nPOS=1\r\nMOTOR=STOP\r\nLED=1\r\n"
+[2:21:33 PM] [TX] 2
+[2:21:43 PM] [RX]
+"CMD_SENT=2\r\nPOS=2\r\nMOTOR=STOP\r\nLED=2\r\n"
+[2:21:43 PM] [TX] 3
+[2:21:53 PM] [RX]
+"CMD_SENT=3\r\nPOS=3\r\nMOTOR=STOP\r\nLED=3\r\n"
+[2:21:53 PM] [TX] 4
+[2:22:03 PM] [RX]
+"CMD_SENT=4\r\nPOS=4\r\nMOTOR=STOP\r\nLED=4\r\n"
+[2:22:03 PM] [TX] 5
+[2:22:13 PM] [RX]
+"CMD_SENT=5\r\nPOS=5\r\nMOTOR=STOP\r\nLED=5\r\n"
+[2:22:13 PM] [SUCCESS] Test Run Completed.

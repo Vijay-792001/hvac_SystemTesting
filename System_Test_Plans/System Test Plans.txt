@@ -1,0 +1,220 @@
+System Test Case Specifications
+
+SYS-TC-01: System Power-up and Initialization
+• Mapped SysReq: SYS-REQ-034, -012, -036, -029
+• Objective: Verify on power-up: system powers on, all peripherals initialize, motor OFF, position is detected, status LED ON, and correct flap position LED
+ON.
+• Preconditions: System powered off, mechanically in any valid position.
+• Inputs: Apply power.
+Steps:
+1. Apply power to system.
+2. Observe LEDs and motor.
+3. Note which flap LED is ON after startup.
+
+Expected Results & Pass Criteria:
+• Status LED turns ON and remains ON.
+• No motor movement at startup.
+• One (and only one) flap position LED (0–5) is ON, matching detected position.
+• ADC detects correct position (verified separately in SYS-TC-12).
+
+
+SYS-TC-02: Command – Flap to Position 0 (Closed)
+• Mapped SysReq: SYS-REQ-021, -023, -024, -044, -048, -046
+• Objective: Confirm system moves flap fully closed on UART command '0'; motor stops at position, status/position LED correct.
+• Preconditions: System idle and booted in any initial position.
+• Inputs: UART command '0\n' from PC.
+Steps:
+1. Observe starting position.
+2. Send UART command '0'.
+3. Observe motor movement, LEDs.
+
+Expected Results & Pass Criteria:
+• System interprets command as valid.
+• Motor moves until flap reaches closed position.
+• Motor stops promptly at '0' position.
+• Only position '0' LED is ON (matches mechanical).
+• Status LED remains ON.
+• Motor does not overshoot past position 0.
+
+
+SYS-TC-03: Command – Flap to Position 5 (Fully Open)
+• Mapped SysReq: SYS-REQ-021, -023, -024, -044, -048, -046
+• Objective: Verify system moves flap fully open on UART '5'; LED, motor, status as expected.
+• Preconditions: System idle, flap at any valid position.
+• Inputs: UART command '5\n'.
+Steps:
+1. Observe initial position.
+2. Send UART '5'.
+3. Observe action.
+
+Expected Results & Pass Criteria:
+• System moves flap fully open (position 5).
+• Motor stops at correct position, does not overshoot.
+• Only position '5' LED is ON.
+• Status LED remains ON.
+
+
+SYS-TC-04: Motor Direction and Stop Logic
+• Mapped SysReq: SYS-REQ-044, -008, -009, -010, -011
+• Objective: Validate correct motor direction for up/down moves, proper stop at target.
+• Preconditions: System idle, start at position 0.
+• Inputs: UART command '5\n', allow to finish, then '0\n'.
+Steps:
+1. Send '5' (observe direction—should be open, CW or as designed).
+2. Wait for completion.
+3. Send '0' (observe reverse direction—should be close, opposite dir).
+4. Wait for completion.
+
+Expected Results & Pass Criteria:
+• Motor spins in expected direction for each move.
+• Motor only runs when needed; stops promptly at target.
+• No continued movement once target reached.
+
+
+SYS-TC-05: Invalid UART Command Handling
+• Mapped SysReq: SYS-REQ-023, -024, -040
+• Objective: Ensure invalid commands (alpha, numbers >5, negative) are ignored; no motor/LED response.
+• Preconditions: System idle at any position.
+• Inputs: Send 'a', '10', '-1', '6', symbols or random ASCII over UART.
+Steps:
+1. Issue each command individually.
+2. Observe system/motor/LEDs for each.
+
+Expected Results & Pass Criteria:
+• No flap movement in response to invalid command.
+• No change in status or position LEDs.
+• System remains responsive for subsequent valid commands.
+
+
+SYS-TC-06: Out-of-Range ADC/Position Feedback
+• Mapped SysReq: SYS-REQ-019, -056
+• Objective: Test system response to ADC reading out of position calibration (simulate by unplugging pot or forcing electrical out-of-bounds).
+• Preconditions: System idle.
+• Inputs: Induce out-of-range potentiometer voltage or disconnect.
+Steps:
+1. With system idle, simulate ADC error (e.g., disconnect or short potentiometer).
+2. Attempt movement command ('2').
+
+Expected Results & Pass Criteria:
+• Motor halts/stays off; error is handled safely.
+• Status LED may turn OFF (if design specifies), or separate error indication.
+• Position LED reflects last valid or turns OFF per requirement/set up.
+• System does not crash/reset.
+
+
+SYS-TC-07: Flap Position LED Mapping Verification
+• Mapped SysReq: SYS-REQ-031, -032
+• Objective: Confirm each position LED maps exactly to physical/mechanical position.
+• Preconditions: System powered, flap can be set at each position.
+• Inputs: UART '0' through '5'.
+Steps:
+1. Sequentially command positions '0' to '5'.
+2. Observe which position LED is ON and physical flap.
+
+Expected Results & Pass Criteria:
+• Only one green LED ON at any time, and matches commanded/measured mechanical position.
+• Status LED remains ON for all positions.
+
+
+SYS-TC-08: Command During Flap Movement
+• Mapped SysReq: SYS-REQ-037, -038, -039
+• Objective: Test system handling of new valid command issued before previous move completes.
+• Preconditions: System idle at middle position (e.g., 2).
+• Inputs: UART '5', midway send '0' before reaching '5'.
+Steps:
+1. Send '5' and observe flap and motor begin to move.
+2. Before arrival, send '0'.
+3. Observe system behavior.
+
+Expected Results & Pass Criteria:
+• System immediately reverses direction to new target (if possible), or otherwise stops/inverts motion to '0'.
+• No lost commands or frozen state.
+• No unintended movement after arriving at new target.
+
+
+SYS-TC-09: System Responsiveness & Stability
+• Mapped SysReq: SYS-REQ-055, -061
+• Objective: Confirm system always responds (visibly) to new valid commands within human-perceivable delay; never locks up.
+• Preconditions: System idle, operator at PC.
+• Inputs: Rapidly issue valid position change commands with <1s interval.
+Steps:
+1. Sequence of valid commands ('1', '4', '0',...).
+2. Observe flap and LEDs.
+
+Expected Results & Pass Criteria:
+• System always accepts and acts on new commands.
+• No loss of control, hangs, or need for reset.
+
+
+SYS-TC-10: Power Loss/Reset and Recovery
+• Mapped SysReq: SYS-REQ-041, -052
+• Objective: Validate system recovers gracefully after power interruption; indicates true flap position correctly; no motor activity at boot.
+• Preconditions: System at known position, power off.
+• Inputs: Power cycle (off/on).
+Steps:
+1. With system in position 'X', power off.
+2. Move flap externally if possible (optional: test if system reads new position).
+3. Power on.
+
+Expected Results & Pass Criteria:
+• Status LED ON.
+• System accurately reads and displays current physical position.
+• No unintended/flap movement at power-on.
+
+
+SYS-TC-11: Loss/Corruption of UART Command
+• Mapped SysReq: SYS-REQ-047, -058
+• Objective: System safely handles UART communication error—command loss or corrupted data.
+• Preconditions: System idle.
+• Inputs: Injected noisy/partial/bogus command bytes (simulate wiring/line noise).
+Steps:
+1. Simulate broken/garbled UART input.
+2. Observe system state and subsequent valid command.
+
+Expected Results & Pass Criteria:
+• No system crash or lock-up.
+• System ignores corrupted command and is responsive to later valid commands.
+
+
+SYS-TC-12: ADC Calibration and Position Mapping Accuracy
+• Mapped SysReq: SYS-REQ-017, -018
+• Objective: Ensure ADC ranges map to correct logical positions (per calibration table in firmware).
+• Preconditions: Known calibration values; controlled input to potentiometer (manual/measured positions).
+• Inputs: Vary potentiometer voltage to known positions.
+Steps:
+1. Manually set flap/gear to each mechanical stop.
+2. Record ADC value (if possible), and observed logical position.
+3. Compare with expected mapping.
+
+Expected Results & Pass Criteria:
+• Each mechanical stop within specified ADC range decodes to right logical position (0–5).
+• System reflects accurate position indication in LEDs.
+
+
+SYS-TC-13: Physical Interface Verification
+• Mapped SysReq: SYS-REQ-045, -046
+• Objective: All hardware I/Os (ADC, GPIOs, PWM channels) and external interfaces behave as specified.
+• Preconditions: System assembled; access to all signals.
+• Inputs: Manual or automated check (e.g., oscilloscope).
+Steps:
+1. Exercise all commands; monitor ADC signal, GPIO LED drivers, PWM output.
+2. Confirm that digital outputs match expected states at various system phases.
+
+Expected Results & Pass Criteria:
+• All hardware pins toggling as per expected software control.
+• No unintended states.
+
+
+SYS-TC-14: Status and Position LED Consistency
+• Mapped SysReq: SYS-REQ-029, -030, -031
+• Objective: Status LED is always ON when system active, flap position LEDs always match and only one is ON.
+• Preconditions: System powered, functional.
+• Inputs: Apply all valid commands and perform power cycling.
+Steps:
+1. Observe status LED at all times.
+2. Change commanded position repeatedly.
+3. Power cycle and retest.
+
+Expected Results & Pass Criteria:
+• Status LED is ON at all times except during out-of-range ADC error if designed so.
+• Exactly one position LED ON matches logical flap position throughout
